@@ -1,22 +1,39 @@
 
 
-//https://www.thecolorapi.com/
-//scheme?hex=@&mode=@
-//red = #ff0000
+
 
 
 const getColorBtn = document.getElementById('get-color-btn');
 const colorDiv = document.getElementById('color-div');
 const hexDiv = document.getElementById('hex-div');
+const colorSelector = document.getElementById('color-selector');
+const typeSelector = document.getElementById('type-selector');
 let colorArray = [];
+setToZero();
 
+
+
+
+//Eventlisteners
 
 getColorBtn.addEventListener('click', renderColors);
 
 
+typeSelector.addEventListener('input', getColor);
+
+
+colorSelector.addEventListener('click', setToZero);
+
+
+
+
+//Functions
 
 function getColor() {
-    fetch('https://www.thecolorapi.com/scheme?hex=ff0000&mode=analogic')
+    colorArray = [];
+    const color = colorSelector.value.slice(1);
+    const type = typeSelector.value
+    fetch(`https://www.thecolorapi.com/scheme?hex=${color}&mode=${type}`)
         .then((response) => response.json())
         .then((data) => {
             for (let element of data.colors) {
@@ -28,17 +45,31 @@ function getColor() {
 
 
 function renderColors() {
-    getColor();
-    for (let i=0; i<6; i++) {
-        let hex = `${i}`.repeat(6);
-        colorDiv.innerHTML+= `<div style=background:#${hex} class="special-div"></div>`
+    if (typeSelector.value === 'none') {
+        alert('Please select the color type!')
+    }
+    colorDiv.innerHTML = '<div></div>';
+    let colorString = '';
+    for (let element of colorArray) {
+        const hex = element;
+        colorString += `<div style=background:${hex} class="special-div"></div>`
     }
     createHexPara();
+    colorDiv.innerHTML = colorString;
 }
 
 
 
 
 function createHexPara() {
-    hexDiv.innerHTML = `<p>test</p>`.repeat(6);
+    hexDiv.innerHTML = '';
+    for (let element of colorArray) {
+        hexDiv.innerHTML += `<p>${element}</p>`
+    }
+}
+
+
+
+function setToZero() {
+    typeSelector.value = 'none'
 }
